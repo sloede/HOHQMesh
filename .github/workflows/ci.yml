@@ -78,6 +78,12 @@ jobs:
             shell: bash
             test_type: valgrind
             coverage: false
+          - os: ubuntu-latest
+            os_name: linux
+            compiler: ifort
+            shell: bash
+            test_type: regular
+            coverage: false
           # macOS
           - os: macos-11
             os_name: macos
@@ -119,6 +125,18 @@ jobs:
         with:
           update: true
           install: git base-devel mingw-w64-x86_64-toolchain
+      - name: Install Intel oneAPI Fortran compiler
+        if: ${{ matrix.compiler == 'ifort' }}
+        run: |
+          # download the key to system keyring
+          wget -O- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB \
+          | gpg --dearmor | sudo tee /usr/share/keyrings/oneapi-archive-keyring.gpg > /dev/null
+
+          # add signed entry to apt sources and configure the APT client to use Intel repository:
+          echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" | sudo tee /etc/apt/sources.list.d/oneAPI.list
+
+          sudo apt update
+          sudo apt-get install intel-oneapi-compiler-fortran-2023.2
       - name: Bootstrap
         run: |
           ./Utilities/bootstrap
