@@ -151,12 +151,7 @@ jobs:
 
           # set environment variables and make them persistent across steps
           . /opt/intel/oneapi/setvars.sh
-
-          echo "=====BEFORE======"
-          cat $GITHUB_ENV
           env | grep oneapi >> $GITHUB_ENV
-          echo "=====AFTER======"
-          cat $GITHUB_ENV
       - name: Bootstrap
         run: |
           ./Utilities/bootstrap
